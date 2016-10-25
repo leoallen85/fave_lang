@@ -7,19 +7,36 @@ RSpec.describe GithubUser do
   end
 
   describe "A user's favourite language" do
-    it "has a favourite language" do
-      visual_basic = double(:language, language: "Visual Basic")
-      js = double(:language, language: "JavaScript")
+    let(:visual_basic) { language("Visual Basic") }
+    let(:js) { language("JavaScript") }
+    let(:php) { language("PHP") }
 
+    it "has a favourite language" do
+      client = stub_repos([js, visual_basic, visual_basic])
+      user = described_class.new("unclebob", client: client)
+
+      expect(user.favourite_language).to eq("Visual Basic")
+    end
+
+    it "knows when there are two favourite languages" do
+      client = stub_repos([visual_basic, js, php, php, js])
+      user = described_class.new("unclebob", client: client)
+
+      expect(user.favourite_language).to eq("JavaScript/PHP")
+    end
+
+    def stub_repos(languages)
       client = double("Octokit")
 
       allow(client).to receive(:repositories)
         .with("unclebob")
-        .and_return([js, visual_basic, visual_basic])
+        .and_return(languages)
 
-      user = described_class.new("unclebob", client: client)
+      client
+    end
 
-      expect(user.favourite_language).to eq("Visual Basic")
+    def language(name)
+      double(:language, language: name)
     end
   end
 end
