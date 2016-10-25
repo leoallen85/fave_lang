@@ -10,9 +10,10 @@ RSpec.describe GithubUser do
     let(:visual_basic) { language("Visual Basic") }
     let(:js) { language("JavaScript") }
     let(:php) { language("PHP") }
+    let(:none) { language(nil) } # This is how Github tells us there is no language
 
     it "has a favourite language" do
-      client = stub_repos([js, visual_basic, visual_basic])
+      client = stub_repos([js, visual_basic, visual_basic, none])
       user = described_class.new("unclebob", client: client)
 
       expect(user.favourite_language).to eq("Visual Basic")
@@ -23,6 +24,20 @@ RSpec.describe GithubUser do
       user = described_class.new("unclebob", client: client)
 
       expect(user.favourite_language).to eq("JavaScript/PHP")
+    end
+
+    it "knows when there are two favourite languages" do
+      client = stub_repos([visual_basic, js, php, php, js])
+      user = described_class.new("unclebob", client: client)
+
+      expect(user.favourite_language).to eq("JavaScript/PHP")
+    end
+
+    it "handles when there is no favourite language" do
+      client = stub_repos([none, none])
+      user = described_class.new("unclebob", client: client)
+
+      expect(user.favourite_language).to eq("None")
     end
 
     def stub_repos(languages)

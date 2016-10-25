@@ -10,6 +10,15 @@ class GithubUser
   end
 
   def favourite_language
+    return "None" if languages.empty?
+    find_favourite_language
+  end
+
+  private
+
+  attr_reader :client
+
+  def find_favourite_language
     languages
       .each_with_object(counter) { |lang, count| count[lang] += 1 }
       .group_by { |lang, count| count }
@@ -19,16 +28,11 @@ class GithubUser
       .join("/")
   end
 
-  private
-
-  attr_reader :client
-
   def counter
     Hash.new(0)
   end
 
   def languages
-    client.repositories(username)
-      .map(&:language)
+    @languages ||= client.repositories(username).map(&:language).compact
   end
 end
