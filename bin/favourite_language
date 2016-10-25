@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+require './favourite_language'
+puts FavouriteLanguage.run(ARGV.first)
