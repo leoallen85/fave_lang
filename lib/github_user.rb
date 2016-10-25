@@ -1,5 +1,5 @@
 require 'octokit'
-require 'pry'
+require './lib/languages'
 
 class GithubUser
   attr_reader :username
@@ -11,28 +11,19 @@ class GithubUser
 
   def favourite_language
     return "None" if languages.empty?
-    find_favourite_language
+    languages.favourite
   end
 
   private
 
   attr_reader :client
 
-  def find_favourite_language
-    languages
-      .each_with_object(counter) { |lang, count| count[lang] += 1 }
-      .group_by { |lang, count| count }
-      .max_by { |count, lang| count }
-      .last
-      .map(&:first)
-      .join("/")
-  end
-
-  def counter
-    Hash.new(0)
-  end
-
   def languages
-    @languages ||= client.repositories(username).map(&:language).compact
+    @languages ||= find_languages
+  end
+
+  def find_languages
+    languages = client.repositories(username).map(&:language).compact
+    Languages.new(languages)
   end
 end
