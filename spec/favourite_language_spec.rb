@@ -4,6 +4,7 @@ require "vcr"
 RSpec.describe FavouriteLanguage, type: :feature do
 
   before do
+    # VCR stops us hitting the API when running tests
     VCR.configure do |c|
       c.cassette_library_dir = 'vcr_cassettes'
       c.hook_into :webmock
