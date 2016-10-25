@@ -13,8 +13,10 @@ RSpec.describe FavouriteLanguage, type: :feature do
 
   it "finds a user's faovurite language on GitHub" do
     VCR.use_cassette("pitchinvasion repos") do
-      result = described_class.run("pitchinvasion")
-      expect(result).to include("pitchinvasion's favourite language is Ruby")
+      app = described_class.new
+      language  = "pitchinvasion's favourite language is Ruby\n"
+
+      expect { app.on_github("pitchinvasion") }.to output(language).to_stdout
     end
   end
 end

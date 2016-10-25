@@ -29,6 +29,7 @@ GEM
     sawyer (0.7.0)
       addressable (>= 2.3.5, < 2.5)
       faraday (~> 0.8, < 0.10)
+    thor (0.19.1)
     vcr (3.0.3)
     webmock (2.1.0)
       addressable (>= 2.3.6)
@@ -42,6 +43,7 @@ DEPENDENCIES
   dotenv
   octokit
   rspec
+  thor
   vcr
   webmock
 
